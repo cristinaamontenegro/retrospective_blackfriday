@@ -75,6 +75,10 @@ header p{margin:0;color:var(--muted);max-width:60ch}
 
 <script>
 (function(){
+  var SUPABASE_URL = "https://dhfgtvuwxpssoovrpemo.supabase.co";
+  var SUPABASE_KEY = "sb_publishable_gnKuPqDC4wCBNNrSwbANBw_KrNsp14Z";
+  var VOTES_URL = SUPABASE_URL + "/rest/v1/votes";
+  var POLL_MS = 3000;
   var POLLS = {
     shopper: [
       {k:"early", e:"🏃", n:"The Early Bird", d:"Alarm set for 05:59. Tabs open since Tuesday. Coffee is a prerequisite."},
@@ -89,11 +93,30 @@ header p{margin:0;color:var(--muted);max-width:60ch}
       {k:"90", s:"-90%", n:"Clearance sprint", d:"Most things went wrong or got blocked. Let's talk about why."}
     ]
   };
-  var state = {votes:{}, uid:null, canVote:true, ready:false, saving:false};
-  var db = null, localMode = false, myDoc = {shopper:null, sticker:null}, chain = Promise.resolve();
-  var localVotesKey = "retrospective-blackfriday:votes";
-  var localUidKey = "retrospective-blackfriday:uid";
+  var state = {votes:{}, uid:null, canVote:true, ready:false};
+  var myDoc = {shopper:null, sticker:null}, chain = Promise.resolve(), pendingSaves = 0, fetching = false;
+  var uidKey = "retrospective-blackfriday:uid";
   var statusEl = document.getElementById("status");
+
+  function headers(extra){
+    var h = {apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY, "Content-Type": "application/json"};
+    if (extra) Object.keys(extra).forEach(function(k){h[k] = extra[k]});
+    return h;
+  }
+
+  function getUid(){
+    try {
+      var u = localStorage.getItem(uidKey);
+      if (!u){
+        u = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() :
+          "u-"+Date.now()+"-"+Math.random().toString(36).slice(2);
+        localStorage.setItem(uidKey, u);
+      }
+      return u;
+    } catch(e){
+      return "u-"+Date.now()+"-"+Math.random().toString(36).slice(2);
+    }
+  }
 
   function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
 
@@ -129,84 +152,55 @@ header p{margin:0;color:var(--muted);max-width:60ch}
     });
   }
 
-  function startLocal(){
-    try {
-      clearTimeout(timer);
-      localMode = true;
-      document.getElementById("poll-intro").textContent =
-        "Tap one answer per question. Votes are saved in this browser and you can change yours any time.";
-      state.uid = localStorage.getItem(localUidKey);
-      if (!state.uid) {
-        state.uid = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() :
-          "local-"+Date.now()+"-"+Math.random().toString(36).slice(2);
-        localStorage.setItem(localUidKey, state.uid);
-      }
-      var stored = localStorage.getItem(localVotesKey);
-      state.votes = stored ? JSON.parse(stored) : {};
-      if (!state.votes || typeof state.votes !== "object" || Array.isArray(state.votes)) {
-        throw new Error("Stored votes are invalid");
-      }
-      if (state.votes[state.uid]) {
-        myDoc = {shopper:state.votes[state.uid].shopper||null, sticker:state.votes[state.uid].sticker||null};
-      }
-      state.ready = true;
-      statusEl.textContent = "Local mode: votes are saved in this browser only.";
-      statusEl.className = "note";
-      render();
-      window.addEventListener("storage", function(ev){
-        if (ev.key !== localVotesKey) return;
-        try {
-          state.votes = ev.newValue ? JSON.parse(ev.newValue) : {};
-          if (!state.votes || typeof state.votes !== "object" || Array.isArray(state.votes)) {
-            throw new Error("Stored votes are invalid");
-          }
-          myDoc = state.votes[state.uid] || {shopper:null, sticker:null};
-          render();
-        } catch(e) {
-          statusEl.textContent = "Local votes could not be refreshed. Reload the page to try again.";
-          statusEl.className = "note warn";
-        }
+  function fetchVotes(){
+    if (fetching) return Promise.resolve();
+    fetching = true;
+    return fetch(VOTES_URL + "?select=uid,shopper,sticker", {headers: headers()}).then(function(r){
+      if (!r.ok) throw new Error("HTTP "+r.status);
+      return r.json();
+    }).then(function(rows){
+      var v = {};
+      rows.forEach(function(row){
+        if (row.uid) v[row.uid] = {shopper: row.shopper||null, sticker: row.sticker||null};
       });
-    } catch(e) {
-      state.canVote = false;
+      // While a save is in flight, keep the optimistic local copy of my vote
+      if (pendingSaves > 0) v[state.uid] = myDoc;
+      else if (v[state.uid]) myDoc = {shopper: v[state.uid].shopper, sticker: v[state.uid].sticker};
+      state.votes = v;
       state.ready = true;
-      statusEl.textContent = "Local votes could not be loaded. Check this browser's storage settings and reload.";
-      statusEl.className = "note warn";
+      clearTimeout(timer);
+      if (/Can't reach|Live results/.test(statusEl.textContent)){statusEl.textContent="";statusEl.className="note"}
       render();
-    }
+    }).catch(function(){
+      if (state.ready){
+        statusEl.textContent = "Live results paused. Retrying…";
+        statusEl.className = "note warn";
+      }
+    }).finally(function(){ fetching = false; });
   }
 
   function castVote(poll, k){
-    if ((!db && !localMode) || !state.uid || !state.canVote) return;
-    var next = {shopper:myDoc.shopper, sticker:myDoc.sticker};
-    if (next[poll]===k) return;
-    var previous = state.votes[state.uid];
-    next[poll] = k;
-    myDoc = next;
-    state.votes[state.uid] = next;
+    if (!state.uid || !state.canVote) return;
+    if (myDoc[poll]===k) return;
+    myDoc = {shopper: myDoc.shopper, sticker: myDoc.sticker};
+    myDoc[poll] = k;
+    state.votes[state.uid] = myDoc;
     render();
-    if (localMode) {
-      try {
-        localStorage.setItem(localVotesKey, JSON.stringify(state.votes));
-        statusEl.textContent = "Local mode: votes are saved in this browser only.";
-        statusEl.className = "note";
-      } catch(e) {
-        statusEl.textContent = "Your vote could not be saved. Check this browser's storage settings.";
-        statusEl.className = "note warn";
-        if (previous) state.votes[state.uid] = previous;
-        else delete state.votes[state.uid];
-        myDoc = previous || {shopper:null, sticker:null};
-        state.canVote = false;
-        render();
-      }
-      return;
-    }
+    var payload = {uid: state.uid, shopper: myDoc.shopper, sticker: myDoc.sticker, at: new Date().toISOString()};
+    pendingSaves++;
     chain = chain.then(function(){
-      return db.doc("votes/"+state.uid).set({shopper:next.shopper, sticker:next.sticker, at:Date.now()});
-    }).then(function(){statusEl.textContent="";statusEl.className="note"}).catch(function(e){
-      statusEl.textContent = "Your vote could not be saved. Ask the facilitator for Contributor access and reload.";
+      return fetch(VOTES_URL + "?on_conflict=uid", {
+        method: "POST",
+        headers: headers({Prefer: "resolution=merge-duplicates"}),
+        body: JSON.stringify(payload)
+      }).then(function(r){ if (!r.ok) throw new Error("HTTP "+r.status); });
+    }).then(function(){
+      pendingSaves--;
+      statusEl.textContent=""; statusEl.className="note";
+    }).catch(function(){
+      pendingSaves--;
+      statusEl.textContent = "Your vote could not be saved. Check your connection and tap again.";
       statusEl.className = "note warn";
-      state.canVote = false; render();
     });
   }
 
@@ -220,45 +214,9 @@ header p{margin:0;color:var(--muted);max-width:60ch}
     if (!state.ready){statusEl.textContent="Can't reach live results yet. Numbers may be out of date.";statusEl.className="note warn"}
   }, 10000);
 
-  (async function(){
-    if (typeof claude === "undefined" || !claude || typeof claude.use !== "function") {
-      startLocal();
-      return;
-    }
-    try {
-      db = await claude.use("db");
-    } catch(e) {
-      startLocal();
-      return;
-    }
-    if (!db){
-      startLocal();
-      return;
-    }
-    db.collection("votes").onSnapshot(function(snap){
-      var v = {};
-      snap.docs.forEach(function(d){v[d.id]=d.data()||{}});
-      state.votes = v; clearTimeout(timer);
-      if (!snap.metadata.fromCache || !state.ready){state.ready = true}
-      if (state.ready && /Can't reach/.test(statusEl.textContent)){statusEl.textContent="";statusEl.className="note"}
-      if (state.uid && v[state.uid]) myDoc = {shopper:v[state.uid].shopper||null, sticker:v[state.uid].sticker||null};
-      render();
-    }, function(){
-      clearTimeout(timer);
-      statusEl.textContent = "Live results stopped. Reload the page to reconnect.";
-      statusEl.className = "note warn";
-    });
-    try {
-      var user = await claude.use("user");
-      if (!user){state.canVote = false; statusEl.textContent="Voting needs a signed-in claude.ai account. You can still see results."; render(); return;}
-      state.uid = await user.id();
-      var cw = user.can("data.write");
-      if (cw === false || !state.uid) state.canVote = false;
-      if (!state.canVote){statusEl.textContent="You have view-only access, so you can see results but not vote.";statusEl.className="note"}
-      if (state.uid && state.votes[state.uid]) myDoc = {shopper:state.votes[state.uid].shopper||null, sticker:state.votes[state.uid].sticker||null};
-      render();
-    } catch(e){ state.canVote = false; render(); }
-  })();
+  state.uid = getUid();
+  fetchVotes();
+  setInterval(fetchVotes, POLL_MS);
 })();
 </script>
 
