@@ -1,0 +1,184 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Black Friday Icebreaker</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: one narrow column, two poll cards styled like shelf price tags, live bars behind each option */
+:root{
+  --bg:#f6f4ee; --card:#ffffff; --fg:#17150f; --muted:#6b6658; --line:#dcd8cb;
+  --sale:#d6281f; --tag:#ffd400; --tag-fg:#17150f; --bar:#fff1a8; --bar-mine:#ffd400;
+  --display:"Space Grotesk",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f0e0b; --card:#1a1812; --fg:#f3efe2; --muted:#a29c88; --line:#2f2b20;
+  --sale:#ff4a3d; --tag:#ffd400; --tag-fg:#17150f; --bar:#3a3210; --bar-mine:#7a6600; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f0e0b; --card:#1a1812; --fg:#f3efe2; --muted:#a29c88; --line:#2f2b20;
+  --sale:#ff4a3d; --tag:#ffd400; --tag-fg:#17150f; --bar:#3a3210; --bar-mine:#7a6600; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+header{display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--sale);font-weight:700}
+h1{font-family:var(--display);font-size:clamp(30px,8vw,44px);line-height:1.05;margin:0;text-wrap:balance}
+header p{margin:0;color:var(--muted);max-width:60ch}
+.poll{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.poll h2{font-family:var(--display);font-size:21px;line-height:1.2;margin:0;text-wrap:balance}
+.poll .sub{margin:0;color:var(--muted);font-size:13px}
+.opts{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.opt{position:relative;display:block;width:100%;text-align:left;font:inherit;color:inherit;background:transparent;
+  border:1px solid var(--line);border-radius:8px;padding:12px 14px;cursor:pointer;overflow:hidden;min-width:0}
+.opt:hover{border-color:var(--fg)}
+.opt:focus-visible{outline:2px solid var(--sale);outline-offset:2px}
+.opt[disabled]{cursor:default}
+.opt[disabled]:hover{border-color:var(--line)}
+.fill{position:absolute;inset:0 auto 0 0;width:0;background:var(--bar);transition:width .5s ease;z-index:0}
+.opt.mine{border-color:var(--fg)}
+.opt.mine .fill{background:var(--bar-mine)}
+.row{position:relative;z-index:1;display:flex;gap:12px;align-items:center;justify-content:space-between}
+.txt{min-width:0}
+.name{font-weight:600;display:block}
+.desc{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.opt.mine .desc{color:var(--fg)}
+.pct{font-family:var(--mono);font-weight:700;font-size:15px;white-space:nowrap;font-variant-numeric:tabular-nums;text-align:right}
+.pct small{display:block;color:var(--muted);font-weight:500;font-size:11px}
+.sticker{font-family:var(--mono);font-weight:700;background:var(--tag);color:var(--tag-fg);border-radius:4px;padding:2px 7px;margin-right:8px;white-space:nowrap}
+.foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.note{font-size:13px;color:var(--muted);margin:0}
+.note.warn{color:var(--sale)}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+</style>
+
+<main>
+  <header>
+    <span class="eyebrow">Retro · Black Friday Sale · 27 Nov 2026</span>
+    <h1>Black Friday Icebreaker</h1>
+    <p>Tap one answer per question. Results update live for everyone, and you can change your vote any time.</p>
+  </header>
+
+  <section class="poll" id="poll-shopper" aria-labelledby="q1">
+    <h2 id="q1">What kind of Black Friday shopper are you?</h2>
+    <p class="sub">Be honest. Your cart history knows.</p>
+    <ul class="opts" id="opts-shopper"></ul>
+    <div class="foot"><span id="meta-shopper">Loading votes…</span></div>
+  </section>
+
+  <section class="poll" id="poll-sticker" aria-labelledby="q2">
+    <h2 id="q2">How was our sprint? Pick its Black Friday sticker.</h2>
+    <p class="sub">The bigger the discount, the rougher the sprint. Pick the one that matches how it felt to you.</p>
+    <ul class="opts" id="opts-sticker"></ul>
+    <div class="foot"><span id="meta-sticker">Loading votes…</span></div>
+  </section>
+
+  <p class="note" id="status" role="status"></p>
+</main>
+
+<script>
+(function(){
+  var POLLS = {
+    shopper: [
+      {k:"early", e:"🏃", n:"The Early Bird", d:"Alarm set for 05:59. Tabs open since Tuesday. Coffee is a prerequisite."},
+      {k:"sheet", e:"🧐", n:"The Spreadsheet Strategist", d:"Has a price-history tracker and a fallback plan for the fallback plan."},
+      {k:"impulse", e:"🛒", n:"The Impulse Buyer", d:"Went in for socks. Left with a pizza oven and a 'great deal' on a drone."},
+      {k:"objector", e:"🛋️", n:"The Conscientious Objector", d:"Doesn't need anything, and is mildly judging everyone who does."}
+    ],
+    sticker: [
+      {k:"10", s:"-10%", n:"Great sprint", d:"We delivered almost everything we planned. Barely a scratch."},
+      {k:"30", s:"-30%", n:"Good sprint", d:"We delivered most of it. A few bumps, nothing serious."},
+      {k:"50", s:"-50%", n:"Rough sprint", d:"About half of the plan slipped or needed rework."},
+      {k:"90", s:"-90%", n:"Clearance sprint", d:"Most things went wrong or got blocked. Let's talk about why."}
+    ]
+  };
+  var state = {votes:{}, uid:null, canVote:true, ready:false, saving:false};
+  var db = null, myDoc = {shopper:null, sticker:null}, chain = Promise.resolve();
+  var statusEl = document.getElementById("status");
+
+  function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
+
+  function build(poll){
+    var ul = document.getElementById("opts-"+poll);
+    ul.innerHTML = POLLS[poll].map(function(o){
+      return '<li><button type="button" class="opt" data-poll="'+poll+'" data-k="'+o.k+'">'+
+        '<span class="fill"></span><span class="row"><span class="txt"><span class="name">'+
+        (o.s?'<span class="sticker">'+esc(o.s)+'</span>':'<span aria-hidden="true">'+o.e+'&nbsp;&nbsp;</span>')+esc(o.n)+
+        '</span><span class="desc">'+esc(o.d)+'</span></span><span class="pct">0%<small>0 votes</small></span></span></button></li>';
+    }).join("");
+  }
+
+  function render(){
+    ["shopper","sticker"].forEach(function(poll){
+      var counts = {}, total = 0;
+      POLLS[poll].forEach(function(o){counts[o.k]=0});
+      Object.keys(state.votes).forEach(function(id){
+        var v = state.votes[id][poll];
+        if (v && counts.hasOwnProperty(v)) {counts[v]++; total++}
+      });
+      document.querySelectorAll('#opts-'+poll+' .opt').forEach(function(b){
+        var k = b.getAttribute("data-k"), c = counts[k], p = total? Math.round(c/total*100):0;
+        b.querySelector(".fill").style.width = p+"%";
+        b.querySelector(".pct").innerHTML = p+'%<small>'+c+(c===1?' vote':' votes')+'</small>';
+        var mine = myDoc[poll]===k;
+        b.classList.toggle("mine", mine);
+        b.setAttribute("aria-pressed", mine?"true":"false");
+        b.disabled = !state.canVote;
+      });
+      document.getElementById("meta-"+poll).textContent = state.ready ?
+        (total+(total===1?" vote":" votes")+(myDoc[poll]?" · yours is highlighted":"")) : "Loading votes…";
+    });
+  }
+
+  function castVote(poll, k){
+    if (!db || !state.uid || !state.canVote) return;
+    var next = {shopper:myDoc.shopper, sticker:myDoc.sticker};
+    if (next[poll]===k) return;
+    next[poll] = k;
+    myDoc = next;
+    state.votes[state.uid] = next;
+    render();
+    chain = chain.then(function(){
+      return db.doc("votes/"+state.uid).set({shopper:next.shopper, sticker:next.sticker, at:Date.now()});
+    }).then(function(){statusEl.textContent="";statusEl.className="note"}).catch(function(e){
+      statusEl.textContent = "Your vote could not be saved. Ask the facilitator for Contributor access and reload.";
+      statusEl.className = "note warn";
+      state.canVote = false; render();
+    });
+  }
+
+  build("shopper"); build("sticker"); render();
+  document.querySelector("main").addEventListener("click", function(ev){
+    var b = ev.target.closest(".opt"); if (!b) return;
+    castVote(b.getAttribute("data-poll"), b.getAttribute("data-k"));
+  });
+
+  var timer = setTimeout(function(){
+    if (!state.ready){statusEl.textContent="Can't reach live results yet. Numbers may be out of date.";statusEl.className="note warn"}
+  }, 10000);
+
+  (async function(){
+    var user = await claude.use("user");
+    db = await claude.use("db");
+    if (!db || !user){
+      clearTimeout(timer);
+      statusEl.textContent = "Sign in to claude.ai to vote and see live results.";
+      statusEl.className = "note warn"; state.canVote = false; render(); return;
+    }
+    state.uid = await user.id();
+    var cw = user.can("data.write");
+    if (cw === false || !state.uid) state.canVote = false;
+    if (!state.canVote){statusEl.textContent="You have view-only access, so you can see results but not vote.";statusEl.className="note"}
+    db.collection("votes").onSnapshot(function(snap){
+      var v = {};
+      snap.docs.forEach(function(d){v[d.id]=d.data()||{}});
+      state.votes = v; state.ready = true; clearTimeout(timer);
+      if (state.uid && v[state.uid]) myDoc = {shopper:v[state.uid].shopper||null, sticker:v[state.uid].sticker||null};
+      render();
+    }, function(){
+      clearTimeout(timer);
+      statusEl.textContent = "Live results stopped. Reload the page to reconnect.";
+      statusEl.className = "note warn";
+    });
+  })();
+})();
+</script>
+
+</body></html>
