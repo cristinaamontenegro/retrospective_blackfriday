@@ -155,21 +155,18 @@ header p{margin:0;color:var(--muted);max-width:60ch}
   }, 10000);
 
   (async function(){
-    var user = await claude.use("user");
     db = await claude.use("db");
-    if (!db || !user){
+    if (!db){
       clearTimeout(timer);
       statusEl.textContent = "Sign in to claude.ai to vote and see live results.";
       statusEl.className = "note warn"; state.canVote = false; render(); return;
     }
-    state.uid = await user.id();
-    var cw = user.can("data.write");
-    if (cw === false || !state.uid) state.canVote = false;
-    if (!state.canVote){statusEl.textContent="You have view-only access, so you can see results but not vote.";statusEl.className="note"}
     db.collection("votes").onSnapshot(function(snap){
       var v = {};
       snap.docs.forEach(function(d){v[d.id]=d.data()||{}});
-      state.votes = v; state.ready = true; clearTimeout(timer);
+      state.votes = v; clearTimeout(timer);
+      if (!snap.metadata.fromCache || !state.ready){state.ready = true}
+      if (state.ready && /Can't reach/.test(statusEl.textContent)){statusEl.textContent="";statusEl.className="note"}
       if (state.uid && v[state.uid]) myDoc = {shopper:v[state.uid].shopper||null, sticker:v[state.uid].sticker||null};
       render();
     }, function(){
@@ -177,6 +174,16 @@ header p{margin:0;color:var(--muted);max-width:60ch}
       statusEl.textContent = "Live results stopped. Reload the page to reconnect.";
       statusEl.className = "note warn";
     });
+    try {
+      var user = await claude.use("user");
+      if (!user){state.canVote = false; statusEl.textContent="Voting needs a signed-in claude.ai account. You can still see results."; render(); return;}
+      state.uid = await user.id();
+      var cw = user.can("data.write");
+      if (cw === false || !state.uid) state.canVote = false;
+      if (!state.canVote){statusEl.textContent="You have view-only access, so you can see results but not vote.";statusEl.className="note"}
+      if (state.uid && state.votes[state.uid]) myDoc = {shopper:state.votes[state.uid].shopper||null, sticker:state.votes[state.uid].sticker||null};
+      render();
+    } catch(e){ state.canVote = false; render(); }
   })();
 })();
 </script>
