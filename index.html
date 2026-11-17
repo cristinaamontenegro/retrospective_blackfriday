@@ -53,7 +53,7 @@ header p{margin:0;color:var(--muted);max-width:60ch}
   <header>
     <span class="eyebrow">Retro · Black Friday Sale · 27 Nov 2026</span>
     <h1>Black Friday Icebreaker</h1>
-    <p>Tap one answer per question. Results update live for everyone, and you can change your vote any time.</p>
+    <p id="poll-intro">Tap one answer per question. Results update live for everyone, and you can change your vote any time.</p>
   </header>
 
   <section class="poll" id="poll-shopper" aria-labelledby="q1">
@@ -90,7 +90,9 @@ header p{margin:0;color:var(--muted);max-width:60ch}
     ]
   };
   var state = {votes:{}, uid:null, canVote:true, ready:false, saving:false};
-  var db = null, myDoc = {shopper:null, sticker:null}, chain = Promise.resolve();
+  var db = null, localMode = false, myDoc = {shopper:null, sticker:null}, chain = Promise.resolve();
+  var localVotesKey = "retrospective-blackfriday:votes";
+  var localUidKey = "retrospective-blackfriday:uid";
   var statusEl = document.getElementById("status");
 
   function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
@@ -127,14 +129,78 @@ header p{margin:0;color:var(--muted);max-width:60ch}
     });
   }
 
+  function startLocal(){
+    try {
+      clearTimeout(timer);
+      localMode = true;
+      document.getElementById("poll-intro").textContent =
+        "Tap one answer per question. Votes are saved in this browser and you can change yours any time.";
+      state.uid = localStorage.getItem(localUidKey);
+      if (!state.uid) {
+        state.uid = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() :
+          "local-"+Date.now()+"-"+Math.random().toString(36).slice(2);
+        localStorage.setItem(localUidKey, state.uid);
+      }
+      var stored = localStorage.getItem(localVotesKey);
+      state.votes = stored ? JSON.parse(stored) : {};
+      if (!state.votes || typeof state.votes !== "object" || Array.isArray(state.votes)) {
+        throw new Error("Stored votes are invalid");
+      }
+      if (state.votes[state.uid]) {
+        myDoc = {shopper:state.votes[state.uid].shopper||null, sticker:state.votes[state.uid].sticker||null};
+      }
+      state.ready = true;
+      statusEl.textContent = "Local mode: votes are saved in this browser only.";
+      statusEl.className = "note";
+      render();
+      window.addEventListener("storage", function(ev){
+        if (ev.key !== localVotesKey) return;
+        try {
+          state.votes = ev.newValue ? JSON.parse(ev.newValue) : {};
+          if (!state.votes || typeof state.votes !== "object" || Array.isArray(state.votes)) {
+            throw new Error("Stored votes are invalid");
+          }
+          myDoc = state.votes[state.uid] || {shopper:null, sticker:null};
+          render();
+        } catch(e) {
+          statusEl.textContent = "Local votes could not be refreshed. Reload the page to try again.";
+          statusEl.className = "note warn";
+        }
+      });
+    } catch(e) {
+      state.canVote = false;
+      state.ready = true;
+      statusEl.textContent = "Local votes could not be loaded. Check this browser's storage settings and reload.";
+      statusEl.className = "note warn";
+      render();
+    }
+  }
+
   function castVote(poll, k){
-    if (!db || !state.uid || !state.canVote) return;
+    if ((!db && !localMode) || !state.uid || !state.canVote) return;
     var next = {shopper:myDoc.shopper, sticker:myDoc.sticker};
     if (next[poll]===k) return;
+    var previous = state.votes[state.uid];
     next[poll] = k;
     myDoc = next;
     state.votes[state.uid] = next;
     render();
+    if (localMode) {
+      try {
+        localStorage.setItem(localVotesKey, JSON.stringify(state.votes));
+        statusEl.textContent = "Local mode: votes are saved in this browser only.";
+        statusEl.className = "note";
+      } catch(e) {
+        statusEl.textContent = "Your vote could not be saved. Check this browser's storage settings.";
+        statusEl.className = "note warn";
+        if (previous) state.votes[state.uid] = previous;
+        else delete state.votes[state.uid];
+        myDoc = previous || {shopper:null, sticker:null};
+        state.canVote = false;
+        render();
+      }
+      return;
+    }
     chain = chain.then(function(){
       return db.doc("votes/"+state.uid).set({shopper:next.shopper, sticker:next.sticker, at:Date.now()});
     }).then(function(){statusEl.textContent="";statusEl.className="note"}).catch(function(e){
@@ -155,11 +221,19 @@ header p{margin:0;color:var(--muted);max-width:60ch}
   }, 10000);
 
   (async function(){
-    db = await claude.use("db");
+    if (typeof claude === "undefined" || !claude || typeof claude.use !== "function") {
+      startLocal();
+      return;
+    }
+    try {
+      db = await claude.use("db");
+    } catch(e) {
+      startLocal();
+      return;
+    }
     if (!db){
-      clearTimeout(timer);
-      statusEl.textContent = "Sign in to claude.ai to vote and see live results.";
-      statusEl.className = "note warn"; state.canVote = false; render(); return;
+      startLocal();
+      return;
     }
     db.collection("votes").onSnapshot(function(snap){
       var v = {};
