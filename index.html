@@ -1,128 +1,223 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RP Team Holidays — December 2026</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Black Friday Icebreaker</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
-:root{--ink:#20283a;--muted:#778197;--line:#e8ebf1;--blue:#5269d9;--green:#269b78}
-*{box-sizing:border-box}body{margin:0;padding:32px 18px;background:linear-gradient(135deg,#f3f5ff,#f8fafc 55%,#edf7f3);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink)}
-.shell{max-width:1160px;margin:auto}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;gap:12px}.brand{font-size:12px;font-weight:800;letter-spacing:.12em;color:#68738b;display:flex;align-items:center;gap:10px}.mark{background:linear-gradient(140deg,#5269d9,#8995ef);color:white;border-radius:12px;width:38px;height:38px;display:grid;place-items:center;font-size:19px}
-button{font:inherit;cursor:pointer}.btn{border:1px solid var(--line);background:white;color:#536078;border-radius:10px;padding:10px 14px;font-size:13px;font-weight:700}.primary{background:var(--blue);color:white;border-color:var(--blue)}.hero,.calendar{background:white;border:1px solid #edf0f5;border-radius:20px;box-shadow:0 15px 40px #25345a0d}.hero{padding:26px 29px;margin-bottom:18px}.heroRow{display:flex;justify-content:space-between;align-items:end;gap:15px}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--blue);font-weight:800;margin-bottom:8px}h1{font-size:clamp(27px,4vw,39px);letter-spacing:-.045em;margin:0}.sub{font-size:14px;color:var(--muted);margin:8px 0 0}.month{background:#eef1ff;color:#5264c5;border-radius:11px;padding:10px 13px;font-size:12px;font-weight:800;white-space:nowrap}.stats{display:flex;gap:24px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:16px;margin-top:22px;color:var(--muted);font-size:12px}.stats strong{color:var(--ink);font-size:14px}.calendar{overflow:hidden}.weekdays,.days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr)) repeat(2,minmax(0,.62fr))}.weekdays{background:#fafbfe;border-bottom:1px solid var(--line)}.weekday:nth-child(n+6){background:#e9ebef;color:#858b98}.weekday{text-align:center;padding:14px 4px;color:#8791a5;font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase}.day{min-height:145px;padding:11px 9px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}.day:nth-child(7n){border-right:0}.weekend{background:#f0f1f4}.empty{background:#fafbfc}.dayhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.date{width:27px;height:27px;border-radius:9px;display:grid;place-items:center;font-weight:800;font-size:13px;color:#4d5870}.add{width:25px;height:25px;border:0;border-radius:8px;background:#f1f3f9;color:#77829a;font-size:18px}.add:hover{background:#eef1ff;color:var(--blue)}.person{display:flex;align-items:center;gap:6px;border-radius:8px;padding:5px 6px;margin:5px 0;font-size:11px;font-weight:700;min-width:0}.avatar{width:21px;height:21px;flex:none;border-radius:7px;display:grid;place-items:center;font-size:9px;background:#ffffff88}.pname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}.person button{border:0;background:transparent;color:inherit;font-size:15px;padding:0 2px;opacity:.65}.person button:hover{opacity:1}.foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#8992a4;font-size:11px;padding:15px 3px}.modalbg{position:fixed;inset:0;background:#18213b66;display:none;align-items:center;justify-content:center;padding:18px}.modalbg.show{display:flex}.modal{width:min(410px,100%);background:white;border-radius:17px;padding:24px;box-shadow:0 25px 80px #101a3544}.modal h2{font-size:19px;margin:0 0 6px}.modal p{font-size:13px;color:var(--muted);margin:0 0 18px}.modal label{font-size:12px;font-weight:750;display:block;margin-bottom:7px}.modal input{width:100%;padding:12px;border:1px solid #dfe4ed;border-radius:10px;font:inherit}.modalActions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
-@media(max-width:700px){body{padding:17px 8px}.hero{padding:21px 17px}.heroRow{align-items:flex-start;flex-direction:column}.day{min-height:108px;padding:7px 4px}.weekday{font-size:8px;padding:11px 1px}.person{font-size:9px;padding:4px;gap:4px}.avatar{width:17px;height:17px;font-size:8px}.date{width:22px;height:22px;font-size:11px}.add{width:21px;height:21px}.person button{font-size:12px}}
-</style></head><body><main class="shell">
-<div class="top"><div class="brand"><span class="mark">✦</span> RP TEAM · PEOPLE PLANNER</div><div><button class="btn" id="clear">Clear calendar</button> <button class="btn primary" id="export">Export list ↓</button></div></div>
-<section class="hero"><div class="heroRow"><div><div class="eyebrow">Team availability</div><h1>RP Team Holidays</h1><p class="sub">A simple overview of who's away and when.</p></div><div class="month">DECEMBER&nbsp; 2026</div></div><div class="stats"><span>● <strong id="people">0</strong> people listed</span><span style="color:#269b78">● <strong id="entries">0</strong> holiday entries</span><span>＋ Click a date to add a team member</span></div></section>
-<section class="calendar"><div class="weekdays"><div class="weekday">Monday</div><div class="weekday">Tuesday</div><div class="weekday">Wednesday</div><div class="weekday">Thursday</div><div class="weekday">Friday</div><div class="weekday">Saturday</div><div class="weekday">Sunday</div></div><div class="days" id="days"></div></section>
-<div class="foot"><span>🟢 Each team member has their own colour &nbsp; · &nbsp; ＋ Add a name &nbsp; · &nbsp; × Remove an entry</span><span id="syncStatus" role="status">Connecting to shared calendar…</span></div></main>
-<div class="modalbg" id="modal"><div class="modal"><h2>Add a team member</h2><p id="dateLabel"></p><label for="name">Team member name</label><input id="name" maxlength="50" placeholder="Enter a name…" autocomplete="off"><div class="modalActions"><button class="btn" id="cancel">Cancel</button><button class="btn primary" id="save">Add to calendar</button></div></div></div>
+/* Layout: one narrow column, two poll cards styled like shelf price tags, live bars behind each option */
+:root{
+  --bg:#f6f4ee; --card:#ffffff; --fg:#17150f; --muted:#6b6658; --line:#dcd8cb;
+  --sale:#d6281f; --tag:#ffd400; --tag-fg:#17150f; --bar:#fff1a8; --bar-mine:#ffd400;
+  --display:"Space Grotesk",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f0e0b; --card:#1a1812; --fg:#f3efe2; --muted:#a29c88; --line:#2f2b20;
+  --sale:#ff4a3d; --tag:#ffd400; --tag-fg:#17150f; --bar:#3a3210; --bar-mine:#7a6600; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f0e0b; --card:#1a1812; --fg:#f3efe2; --muted:#a29c88; --line:#2f2b20;
+  --sale:#ff4a3d; --tag:#ffd400; --tag-fg:#17150f; --bar:#3a3210; --bar-mine:#7a6600; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+header{display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--sale);font-weight:700}
+h1{font-family:var(--display);font-size:clamp(30px,8vw,44px);line-height:1.05;margin:0;text-wrap:balance}
+header p{margin:0;color:var(--muted);max-width:60ch}
+.poll{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.poll h2{font-family:var(--display);font-size:21px;line-height:1.2;margin:0;text-wrap:balance}
+.poll .sub{margin:0;color:var(--muted);font-size:13px}
+.opts{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.opt{position:relative;display:block;width:100%;text-align:left;font:inherit;color:inherit;background:transparent;
+  border:1px solid var(--line);border-radius:8px;padding:12px 14px;cursor:pointer;overflow:hidden;min-width:0}
+.opt:hover{border-color:var(--fg)}
+.opt:focus-visible{outline:2px solid var(--sale);outline-offset:2px}
+.opt[disabled]{cursor:default}
+.opt[disabled]:hover{border-color:var(--line)}
+.fill{position:absolute;inset:0 auto 0 0;width:0;background:var(--bar);transition:width .5s ease;z-index:0}
+.opt.mine{border-color:var(--fg)}
+.opt.mine .fill{background:var(--bar-mine)}
+.row{position:relative;z-index:1;display:flex;gap:12px;align-items:center;justify-content:space-between}
+.txt{min-width:0}
+.name{font-weight:600;display:block}
+.desc{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.opt.mine .desc{color:var(--fg)}
+.pct{font-family:var(--mono);font-weight:700;font-size:15px;white-space:nowrap;font-variant-numeric:tabular-nums;text-align:right}
+.pct small{display:block;color:var(--muted);font-weight:500;font-size:11px}
+.sticker{font-family:var(--mono);font-weight:700;background:var(--tag);color:var(--tag-fg);border-radius:4px;padding:2px 7px;margin-right:8px;white-space:nowrap}
+.foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.note{font-size:13px;color:var(--muted);margin:0}
+.note.warn{color:var(--sale)}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+</style>
+
+<main>
+  <header>
+    <span class="eyebrow">Retro · Black Friday Sale · 27 Nov 2026</span>
+    <h1>Black Friday Icebreaker</h1>
+    <p id="poll-intro">Tap one answer per question. Results update live for everyone, and you can change your vote any time.</p>
+  </header>
+
+  <section class="poll" id="poll-shopper" aria-labelledby="q1">
+    <h2 id="q1">What kind of Black Friday shopper are you?</h2>
+    <p class="sub">Be honest. Your cart history knows.</p>
+    <ul class="opts" id="opts-shopper"></ul>
+    <div class="foot"><span id="meta-shopper">Loading votes…</span></div>
+  </section>
+
+  <section class="poll" id="poll-sticker" aria-labelledby="q2">
+    <h2 id="q2">How was our sprint? Pick its Black Friday sticker.</h2>
+    <p class="sub">The bigger the discount, the rougher the sprint. Pick the one that matches how it felt to you.</p>
+    <ul class="opts" id="opts-sticker"></ul>
+    <div class="foot"><span id="meta-sticker">Loading votes…</span></div>
+  </section>
+
+  <p class="note" id="status" role="status"></p>
+</main>
+
 <script>
-(() => {
-  const SUPABASE_URL = "https://dhfgtvuwxpssoovrpemo.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_gnKuPqDC4wCBNNrSwbANBw_KrNsp14Z";
-  const TABLE = "rp_team_holidays";
-  const Y = 2026, M = 11;
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  let entries = [];
-  let chosen = null;
-  let busy = false;
-  const $ = id => document.getElementById(id);
-  const dateKey = date => `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
-  const colourFor = name => {
-    let hash = 0;
-    for (let i=0;i<name.length;i++) hash = (hash*31 + name.charCodeAt(i))|0;
-    const hue = Math.abs(hash)%360;
-    return {bg:`hsl(${hue} 72% 92%)`, fg:`hsl(${hue} 42% 32%)`};
+(function(){
+  var SUPABASE_URL = "https://dhfgtvuwxpssoovrpemo.supabase.co";
+  var SUPABASE_KEY = "sb_publishable_gnKuPqDC4wCBNNrSwbANBw_KrNsp14Z";
+  var VOTES_URL = SUPABASE_URL + "/rest/v1/votes";
+  var POLL_MS = 3000;
+  var POLLS = {
+    shopper: [
+      {k:"early", e:"🏃", n:"The Early Bird", d:"Alarm set for 05:59. Tabs open since Tuesday. Coffee is a prerequisite."},
+      {k:"sheet", e:"🧐", n:"The Spreadsheet Strategist", d:"Has a price-history tracker and a fallback plan for the fallback plan."},
+      {k:"impulse", e:"🛒", n:"The Impulse Buyer", d:"Went in for socks. Left with a pizza oven and a 'great deal' on a drone."},
+      {k:"objector", e:"🛋️", n:"The Conscientious Objector", d:"Doesn't need anything, and is mildly judging everyone who does."}
+    ],
+    sticker: [
+      {k:"10", s:"-10%", n:"Great sprint", d:"We delivered almost everything we planned. Barely a scratch."},
+      {k:"30", s:"-30%", n:"Good sprint", d:"We delivered most of it. A few bumps, nothing serious."},
+      {k:"50", s:"-50%", n:"Rough sprint", d:"About half of the plan slipped or needed rework."},
+      {k:"90", s:"-90%", n:"Clearance sprint", d:"Most things went wrong or got blocked. Let's talk about why."}
+    ]
   };
-  function status(message, isError=false) {
-    $('syncStatus').textContent = message;
-    $('syncStatus').style.color = isError ? '#b42318' : '';
+  var state = {votes:{}, uid:null, canVote:true, ready:false};
+  var myDoc = {shopper:null, sticker:null}, chain = Promise.resolve(), pendingSaves = 0, fetching = false;
+  var uidKey = "retrospective-blackfriday:uid";
+  var statusEl = document.getElementById("status");
+
+  function headers(extra){
+    var h = {apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY, "Content-Type": "application/json"};
+    if (extra) Object.keys(extra).forEach(function(k){h[k] = extra[k]});
+    return h;
   }
-  function close() { $('modal').classList.remove('show'); chosen=null; }
-  function openAdd(date) {
-    chosen=date;
-    $('dateLabel').textContent=date.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    $('name').value='';
-    $('modal').classList.add('show');
-    setTimeout(()=>$('name').focus(),40);
-  }
-  async function loadEntries() {
-    status('Syncing…');
-    const {data,error}=await supabase.from(TABLE).select('id, holiday_date, team_member').order('holiday_date').order('team_member');
-    if(error){status('Could not load shared calendar — check Supabase setup.',true);console.error(error);return;}
-    entries=data||[];
-    draw();
-    status('Live shared calendar · changes sync automatically');
-  }
-  function draw() {
-    const root=$('days'); root.innerHTML='';
-    const first=new Date(2026,10,30), last=new Date(2027,0,7), dates=[];
-    for(let d=new Date(first);d<=last;d.setDate(d.getDate()+1)) dates.push(new Date(d));
-    dates.forEach((date,index)=>{
-      const cell=document.createElement('div');
-      cell.className='day'+(index%7>=5?' weekend':'');
-      const head=document.createElement('div');head.className='dayhead';
-      const num=document.createElement('span');num.className='date';num.textContent=date.getDate();
-      const plus=document.createElement('button');plus.className='add';plus.textContent='+';plus.title='Add a team member';plus.setAttribute('aria-label','Add a team member on '+date.toDateString());plus.onclick=()=>openAdd(date);
-      head.append(num,plus);cell.append(head);
-      const k=dateKey(date);
-      entries.filter(entry=>entry.holiday_date===k).forEach(entry=>{
-        const colours=colourFor(entry.team_member.toLowerCase());
-        const p=document.createElement('div');p.className='person';p.style.backgroundColor=colours.bg;p.style.color=colours.fg;
-        const av=document.createElement('span');av.className='avatar';av.textContent=entry.team_member.trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase();
-        const label=document.createElement('span');label.className='pname';label.textContent=entry.team_member;
-        const remove=document.createElement('button');remove.textContent='×';remove.title='Remove '+entry.team_member;remove.setAttribute('aria-label','Remove '+entry.team_member);
-        remove.onclick=()=>deleteEntry(entry.id);
-        p.append(av,label,remove);cell.append(p);
-      });
-      root.append(cell);
-    });
-    for(let i=0;i<3;i++){const blank=document.createElement('div');blank.className='day empty weekend';root.append(blank);}
-    $('people').textContent=new Set(entries.map(e=>e.team_member.toLowerCase())).size;
-    $('entries').textContent=entries.length;
-  }
-  async function addEntry() {
-    const name=$('name').value.trim();
-    if(!name||!chosen||busy)return;
-    busy=true; $('save').disabled=true; status('Saving…');
-    const date=dateKey(chosen);
-    const {error}=await supabase.from(TABLE).insert({holiday_date:date,team_member:name});
-    busy=false; $('save').disabled=false;
-    if(error){
-      if(error.code==='23505') status('That person is already listed on this date.',true);
-      else status('Could not save entry. Check Supabase permissions.',true);
-      console.error(error);return;
+
+  function getUid(){
+    try {
+      var u = localStorage.getItem(uidKey);
+      if (!u){
+        u = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() :
+          "u-"+Date.now()+"-"+Math.random().toString(36).slice(2);
+        localStorage.setItem(uidKey, u);
+      }
+      return u;
+    } catch(e){
+      return "u-"+Date.now()+"-"+Math.random().toString(36).slice(2);
     }
-    close(); await loadEntries();
   }
-  async function deleteEntry(id) {
-    if(busy)return;
-    busy=true;status('Updating…');
-    const {error}=await supabase.from(TABLE).delete().eq('id',id);
-    busy=false;
-    if(error){status('Could not remove entry. Check Supabase permissions.',true);console.error(error);return;}
-    await loadEntries();
+
+  function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
+
+  function build(poll){
+    var ul = document.getElementById("opts-"+poll);
+    ul.innerHTML = POLLS[poll].map(function(o){
+      return '<li><button type="button" class="opt" data-poll="'+poll+'" data-k="'+o.k+'">'+
+        '<span class="fill"></span><span class="row"><span class="txt"><span class="name">'+
+        (o.s?'<span class="sticker">'+esc(o.s)+'</span>':'<span aria-hidden="true">'+o.e+'&nbsp;&nbsp;</span>')+esc(o.n)+
+        '</span><span class="desc">'+esc(o.d)+'</span></span><span class="pct">0%<small>0 votes</small></span></span></button></li>';
+    }).join("");
   }
-  async function clearCalendar() {
-    if(!confirm('Remove every name from this shared calendar?'))return;
-    busy=true;status('Clearing calendar…');
-    const {error}=await supabase.from(TABLE).delete().gte('holiday_date','2026-11-30').lte('holiday_date','2027-01-07');
-    busy=false;
-    if(error){status('Could not clear calendar. Check Supabase permissions.',true);console.error(error);return;}
-    await loadEntries();
+
+  function render(){
+    ["shopper","sticker"].forEach(function(poll){
+      var counts = {}, total = 0;
+      POLLS[poll].forEach(function(o){counts[o.k]=0});
+      Object.keys(state.votes).forEach(function(id){
+        var v = state.votes[id][poll];
+        if (v && counts.hasOwnProperty(v)) {counts[v]++; total++}
+      });
+      document.querySelectorAll('#opts-'+poll+' .opt').forEach(function(b){
+        var k = b.getAttribute("data-k"), c = counts[k], p = total? Math.round(c/total*100):0;
+        b.querySelector(".fill").style.width = p+"%";
+        b.querySelector(".pct").innerHTML = p+'%<small>'+c+(c===1?' vote':' votes')+'</small>';
+        var mine = myDoc[poll]===k;
+        b.classList.toggle("mine", mine);
+        b.setAttribute("aria-pressed", mine?"true":"false");
+        b.disabled = !state.canVote;
+      });
+      document.getElementById("meta-"+poll).textContent = state.ready ?
+        (total+(total===1?" vote":" votes")+(myDoc[poll]?" · yours is highlighted":"")) : "Loading votes…";
+    });
   }
-  $('save').onclick=addEntry;
-  $('cancel').onclick=close;
-  $('name').onkeydown=e=>{if(e.key==='Enter')addEntry();if(e.key==='Escape')close();};
-  $('modal').onclick=e=>{if(e.target===$('modal'))close();};
-  $('clear').onclick=clearCalendar;
-  $('export').onclick=()=>{
-    const rows=[['Date','Team Member'],...entries.sort((a,b)=>a.holiday_date.localeCompare(b.holiday_date)||a.team_member.localeCompare(b.team_member)).map(e=>[e.holiday_date,e.team_member])];
-    const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
-    const a=document.createElement('a'),u=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
-    a.href=u;a.download='RP_Team_Holidays_December_2026.csv';a.click();URL.revokeObjectURL(u);
-  };
-  supabase.channel('rp-team-holidays-live')
-    .on('postgres_changes',{event:'*',schema:'public',table:TABLE},()=>loadEntries())
-    .subscribe();
-  loadEntries();
+
+  function fetchVotes(){
+    if (fetching) return Promise.resolve();
+    fetching = true;
+    return fetch(VOTES_URL + "?select=uid,shopper,sticker", {headers: headers()}).then(function(r){
+      if (!r.ok) throw new Error("HTTP "+r.status);
+      return r.json();
+    }).then(function(rows){
+      var v = {};
+      rows.forEach(function(row){
+        if (row.uid) v[row.uid] = {shopper: row.shopper||null, sticker: row.sticker||null};
+      });
+      // While a save is in flight, keep the optimistic local copy of my vote
+      if (pendingSaves > 0) v[state.uid] = myDoc;
+      else if (v[state.uid]) myDoc = {shopper: v[state.uid].shopper, sticker: v[state.uid].sticker};
+      state.votes = v;
+      state.ready = true;
+      clearTimeout(timer);
+      if (/Can't reach|Live results/.test(statusEl.textContent)){statusEl.textContent="";statusEl.className="note"}
+      render();
+    }).catch(function(){
+      if (state.ready){
+        statusEl.textContent = "Live results paused. Retrying…";
+        statusEl.className = "note warn";
+      }
+    }).finally(function(){ fetching = false; });
+  }
+
+  function castVote(poll, k){
+    if (!state.uid || !state.canVote) return;
+    if (myDoc[poll]===k) return;
+    myDoc = {shopper: myDoc.shopper, sticker: myDoc.sticker};
+    myDoc[poll] = k;
+    state.votes[state.uid] = myDoc;
+    render();
+    var payload = {uid: state.uid, shopper: myDoc.shopper, sticker: myDoc.sticker, at: new Date().toISOString()};
+    pendingSaves++;
+    chain = chain.then(function(){
+      return fetch(VOTES_URL + "?on_conflict=uid", {
+        method: "POST",
+        headers: headers({Prefer: "resolution=merge-duplicates"}),
+        body: JSON.stringify(payload)
+      }).then(function(r){ if (!r.ok) throw new Error("HTTP "+r.status); });
+    }).then(function(){
+      pendingSaves--;
+      statusEl.textContent=""; statusEl.className="note";
+    }).catch(function(){
+      pendingSaves--;
+      statusEl.textContent = "Your vote could not be saved. Check your connection and tap again.";
+      statusEl.className = "note warn";
+    });
+  }
+
+  build("shopper"); build("sticker"); render();
+  document.querySelector("main").addEventListener("click", function(ev){
+    var b = ev.target.closest(".opt"); if (!b) return;
+    castVote(b.getAttribute("data-poll"), b.getAttribute("data-k"));
+  });
+
+  var timer = setTimeout(function(){
+    if (!state.ready){statusEl.textContent="Can't reach live results yet. Numbers may be out of date.";statusEl.className="note warn"}
+  }, 10000);
+
+  state.uid = getUid();
+  fetchVotes();
+  setInterval(fetchVotes, POLL_MS);
 })();
-</script></body></html>
+</script>
+
+</body></html>
