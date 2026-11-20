@@ -1,22 +1,40 @@
--- Setup for the Black Friday Icebreaker votes table.
--- Run this in the Supabase Dashboard: SQL Editor -> New query -> paste -> Run.
+-- RP Team Holidays calendar
+-- Run this script in Supabase Dashboard > SQL Editor.
 
-create table if not exists public.votes (
-  uid text primary key,
-  shopper text,
-  sticker text,
-  at timestamptz not null default now()
+create table if not exists public.rp_team_holidays (
+  id uuid primary key default gen_random_uuid(),
+  holiday_date date not null,
+  team_member text not null check (char_length(trim(team_member)) between 1 and 50),
+  created_at timestamptz not null default now()
 );
 
-alter table public.votes enable row level security;
+-- Prevent duplicate names on the same date (case-insensitive).
+create unique index if not exists rp_team_holidays_date_member_unique
+  on public.rp_team_holidays (holiday_date, lower(team_member));
 
--- Anyone with the anon (publishable) key can read results,
--- and insert/update their own vote row (open by design for the retro).
-create policy "anon can read votes" on public.votes
-  for select to anon using (true);
+alter table public.rp_team_holidays enable row level security;
 
-create policy "anon can insert votes" on public.votes
-  for insert to anon with check (true);
+-- This policy makes the calendar publicly readable/editable by anyone
+-- who can access the published page and its public key.
+-- Use Supabase Auth + user-specific policies if this should be private.
+drop policy if exists "Public can read RP team holidays" on public.rp_team_holidays;
+create policy "Public can read RP team holidays"
+  on public.rp_team_holidays for select to anon using (true);
 
-create policy "anon can update votes" on public.votes
-  for update to anon using (true) with check (true);
+drop policy if exists "Public can add RP team holidays" on public.rp_team_holidays;
+create policy "Public can add RP team holidays"
+  on public.rp_team_holidays for insert to anon with check (true);
+
+drop policy if exists "Public can remove RP team holidays" on public.rp_team_holidays;
+create policy "Public can remove RP team holidays"
+  on public.rp_team_holidays for delete to anon using (true);
+
+-- Enable Realtime updates for this table.
+do $$
+begin
+  alter publication supabase_realtime add table public.rp_team_holidays;
+exception
+  when duplicate_object then null;
+  when undefined_object then
+    raise notice 'Publication supabase_realtime not found; enable Realtime for this table in the Supabase Dashboard.';
+end $$;
